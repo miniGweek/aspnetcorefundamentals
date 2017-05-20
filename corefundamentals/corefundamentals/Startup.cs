@@ -27,10 +27,15 @@ namespace corefundamentals
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(Configuration);
+            services.AddSingleton<IGreeter, Greeter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IGreeter greeter)
         {
             loggerFactory.AddConsole();
 
@@ -39,9 +44,11 @@ namespace corefundamentals
                 app.UseDeveloperExceptionPage();
             }
 
+            var message = greeter.SayGreeting();
+
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync(Configuration["Greeting"]);
+                await context.Response.WriteAsync(message);
             });
         }
     }
